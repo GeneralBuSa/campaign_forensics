@@ -1,0 +1,274 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Themes ───────────────────────────────────────────────────────────────
+   Colours are RGB triplets used by tailwind.config.ts. Dark is the default; the theme switch
+   sets data-theme="light" on <html> (and an inline script in app/layout.tsx restores it before
+   the first paint, so there is no flash). */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --c-ink: 0 0 0;
+  --c-ink-surface: 14 14 14;
+  --c-ink-raised: 20 20 20;
+  --c-ink-line: 34 34 34;
+  --c-ink-strong: 51 51 51;
+  --c-fg: 255 255 255;
+  --c-fg-body: 154 154 154;
+  --c-fg-muted: 107 107 107;
+  --c-amber: 245 166 35;
+  --c-confirmed: 62 207 142;
+  --c-uncertain: 154 154 154;
+  --c-rejected: 239 91 91;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --c-ink: 255 255 255;
+  --c-ink-surface: 247 247 246;
+  --c-ink-raised: 239 239 237;
+  --c-ink-line: 227 227 224;
+  --c-ink-strong: 207 207 203;
+  --c-fg: 17 17 17;
+  --c-fg-body: 74 74 74;
+  --c-fg-muted: 107 107 107;
+  /* Darker amber for text and lines: 5.3:1 on white. */
+  --c-amber: 154 93 0;
+  --c-confirmed: 15 123 75;
+  --c-uncertain: 107 107 107;
+  --c-rejected: 198 40 40;
+}
+
+/* Solid amber fills stay bright in the light theme (black text on them, as in the dark theme). */
+:root[data-theme="light"] .bg-amber,
+:root[data-theme="light"] .btn-primary,
+:root[data-theme="light"] .checkbox:checked {
+  background-color: rgb(245 166 35 / var(--tw-bg-opacity, 1));
+}
+:root[data-theme="light"] .btn-primary:hover,
+:root[data-theme="light"] .bg-amber.hover-bright:hover {
+  background-color: #ffb94a;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-ink font-sans text-fg-body antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply text-fg;
+  }
+  ::selection {
+    background: rgb(245 166 35 / 0.35);
+    color: rgb(var(--c-fg));
+  }
+  :focus-visible {
+    outline: 2px solid rgb(var(--c-amber));
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+  .label {
+    @apply font-mono text-[11px] uppercase tracking-label text-fg-muted;
+  }
+  .label-amber {
+    @apply font-mono text-[11px] uppercase tracking-label text-amber;
+  }
+  .card {
+    @apply rounded-card border border-ink-line bg-ink-surface;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-amber text-black hover:bg-[#ffb94a];
+  }
+  .btn-ghost {
+    @apply btn border border-ink-strong text-fg hover:border-fg-muted hover:bg-ink-raised;
+  }
+  .btn-sm {
+    @apply px-3.5 py-1.5 text-xs;
+  }
+  .heading-serif {
+    @apply font-serif font-normal leading-[1.05] tracking-tight text-fg;
+  }
+  .link-amber {
+    @apply text-amber underline-offset-4 hover:underline;
+  }
+  /* Custom checkbox: dark rounded box, amber fill + black tick when checked. */
+  .checkbox {
+    @apply relative mt-0.5 h-5 w-5 shrink-0 cursor-pointer appearance-none rounded-md border border-ink-strong bg-ink-raised transition-all duration-150 hover:border-fg-muted;
+  }
+  .checkbox::after {
+    content: "";
+    @apply absolute inset-0 scale-50 opacity-0 transition-all duration-150;
+    background: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27 fill=%27none%27 stroke=%27%23000%27 stroke-width=%272.6%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M5 10.5l3.2 3.2L15 7%27/%3E%3C/svg%3E") center / 14px no-repeat;
+  }
+  .checkbox:checked {
+    @apply border-amber bg-amber shadow-[0_0_0_4px_rgba(245,166,35,0.15)];
+  }
+  .checkbox:checked::after {
+    @apply scale-100 opacity-100;
+  }
+  .checkbox:focus-visible {
+    @apply outline-none ring-2 ring-amber ring-offset-2 ring-offset-ink;
+  }
+  .checkbox[aria-invalid="true"] {
+    @apply border-status-rejected;
+  }
+  /* Label row around a checkbox: the whole row is the click target. */
+  .checkbox-row {
+    @apply flex cursor-pointer items-start gap-3 text-sm leading-relaxed;
+  }
+  .checkbox-row:hover .checkbox:not(:checked) {
+    @apply border-fg-muted;
+  }
+  .input {
+    @apply w-full rounded-lg border border-ink-strong bg-ink-raised px-3.5 py-2.5 text-sm text-fg placeholder:text-fg-muted focus:border-amber focus:outline-none;
+  }
+  .prose-legal h2 {
+    @apply mt-10 scroll-mt-24 font-serif text-2xl text-fg;
+  }
+  .prose-legal h3 {
+    @apply mt-6 text-base font-semibold text-fg;
+  }
+  .prose-legal p {
+    @apply mt-3 leading-relaxed;
+  }
+  .prose-legal ul {
+    @apply mt-3 list-disc space-y-1.5 pl-5;
+  }
+  .prose-legal ol {
+    @apply mt-3 list-decimal space-y-1.5 pl-5;
+  }
+  .prose-legal a {
+    @apply text-amber underline underline-offset-4;
+  }
+  .prose-legal strong {
+    @apply text-fg;
+  }
+  .prose-legal table {
+    @apply mt-4 w-full border-collapse text-sm;
+  }
+  .prose-legal th {
+    @apply border-b border-ink-strong py-2 pr-4 text-left font-mono text-[11px] uppercase tracking-label text-fg-muted;
+  }
+  .prose-legal td {
+    @apply border-b border-ink-line py-2 pr-4 align-top;
+  }
+  .prose-legal blockquote {
+    @apply mt-4 border-l-2 border-amber pl-4 text-fg-body;
+  }
+}
+
+/* Print: /cases/[slug]/print and the browser's "Save as PDF". No watermark. */
+@media print {
+  @page {
+    margin: 16mm;
+  }
+  html, body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-surface, .print-surface * {
+    color: #111 !important;
+    background: transparent !important;
+    border-color: #ccc !important;
+    box-shadow: none !important;
+  }
+  .print-surface .print-accent {
+    color: #9a5d00 !important;
+  }
+  .print-break {
+    break-before: page;
+  }
+  .print-avoid {
+    break-inside: avoid;
+  }
+}
+
+/* Landing hero: the logo beam (HeroBeam). A wedge pointing right from the star at --beam-x/--beam-y,
+   fading with distance in every direction so it can be rotated towards the mouse. */
+.hero-beam {
+  background: conic-gradient(
+    from 0deg at var(--beam-x) var(--beam-y),
+    transparent 0deg 73deg,
+    rgba(245, 166, 35, 0.55) 90deg,
+    transparent 107deg 360deg
+  );
+  -webkit-mask-image: radial-gradient(circle at var(--beam-x) var(--beam-y), transparent 0, transparent 14px, #000 48px, rgba(0, 0, 0, 0.55) 380px, transparent 820px);
+  mask-image: radial-gradient(circle at var(--beam-x) var(--beam-y), transparent 0, transparent 14px, #000 48px, rgba(0, 0, 0, 0.55) 380px, transparent 820px);
+  filter: blur(4px);
+}
+.hero-spark {
+  filter: drop-shadow(0 0 12px rgba(245, 166, 35, 0.9));
+  animation: spark-pulse 4s ease-in-out infinite;
+}
+.hero-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27160%27 height=%27160%27%3E%3Cfilter id=%27n%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.9%27 numOctaves=%272%27 stitchTiles=%27stitch%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27/%3E%3C/svg%3E");
+}
+@keyframes spark-pulse {
+  0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.75; transform: translate(-50%, -50%) scale(0.85); }
+}
+
+/* Landing "four steps" strip (StepsMarquee): slides right-to-left, pauses on hover/focus. */
+.marquee {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+.marquee-track {
+  animation: marquee 36s linear infinite;
+}
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-100% / 3)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee { -webkit-mask-image: none; mask-image: none; }
+  .marquee-track { animation: none; }
+}
+
+/* Respect reduced-motion. The evidence flash stays: it is a colour cue, not movement. */
+@media (prefers-reduced-motion: reduce) {
+  *:not(.animate-flash),
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* The logo is white and amber on black. Dark theme: "screen" drops the black. Light theme:
+   invert (hue-rotated back so the amber stays amber) and "multiply" drops the white. */
+.logo-mark {
+  mix-blend-mode: screen;
+}
+:root[data-theme="light"] .logo-mark {
+  filter: invert(1) hue-rotate(180deg);
+  mix-blend-mode: multiply;
+}
+
+/* The hero beam is light on dark; on white it reads as a soft amber glow instead. */
+:root[data-theme="light"] .hero-beam {
+  opacity: 0.55;
+}
+:root[data-theme="light"] .hero-grain {
+  display: none;
+}
